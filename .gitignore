@@ -1,0 +1,6 @@
+*.pdf
+*.out
+*.zip
+resproj1.c
+/tests
+src/.clang-format
