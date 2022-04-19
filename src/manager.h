@@ -45,7 +45,7 @@
 #define ERROR_RESERV_CODE "invalid reservation code\n"
 #define ERROR_NONEXISTENT_FLIGHT "%s: flight does not exist\n"
 #define ERROR_RESERV_DUPLICATE "%s: flight reservation already used\n"
-#define ERROR_PASSENGERS "invalid passenger number\n"
+#define ERROR_PASSENGERS "invalid passager number\n"
 #define ERROR_RESERV_LIMIT "too many reservations\n"
 
 /* Input and Output Strings */
@@ -76,12 +76,15 @@ typedef struct {
 	char city[MAX_CITY];
 } airport;
 
-typedef struct reservation { /* maybe add flight pointer to the struct??? !! */
+typedef struct reservation {
 	char *code;
 	int passengers;
-	flight *pFlight;
-	struct reservation *next;
 } *reserv;
+
+typedef struct node {
+	reserv res;
+	struct node *previous, *next;
+} *link;
 
 typedef struct {
 	char code[MAX_CODE];
@@ -92,7 +95,7 @@ typedef struct {
 	time duration;
 	int capacity;
 	int ocupation;
-	reserv passengers;
+	link passengers;
 } flight;
 
 typedef struct {
@@ -134,6 +137,8 @@ void arrivals();
 void date_forward();
 void reservation();
 void delete();
+void reservation();
+void delete();
 
 /* 
  * Auxiliary Functions 
@@ -155,5 +160,11 @@ void search_departures(char ID[]);
 arrival flight_into_arrival(flight f);
 void order_arrivals(arrival* arrivals_list, int size);
 void search_arrivals(char ID[]);
+void add_reserv(flight *f, reserv r);
+int reservation_errors(flight *f, reserv r);
+int valid_rescode(char *code);
+void del_allres(int i);
+void del_flight(int n);
+void del_all();
 
 #endif
