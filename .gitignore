@@ -1,6 +1,7 @@
 *.pdf
 *.out
+*.sh
 *.zip
 resproj1.c
-/tests
+src/tests
 src/.clang-format

@@ -28,6 +28,7 @@ int num_airport = 0;
 int main() {
 	while (input_reader());
 	/* É necessário dar free de TUDO no final do programa !! */
+	del_all();
 	return 0;
 }
 
@@ -56,12 +57,12 @@ int input_reader() {
 		case 't':
 			date_forward();
 			break;
-/* 		case 'r':
+ 		case 'r':
 			reservation();
 			break;
 		case 'e':
 			delete();
-			break; */
+			break; 
 	}
 	return 1;
 }
