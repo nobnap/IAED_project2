@@ -2,7 +2,7 @@
 
 void reservation() {
 	int i;
-	flight input;
+	flight input, *f;
 	char a;
 
 	a = getchar();
@@ -11,8 +11,12 @@ void reservation() {
 	scanf(DATE_INPUT, &input.dep_date.day, &input.dep_date.month, &input.dep_date.year);
 
 	i = search_flight(input);
+	f = &flight_list[i];
 
 	if ((a = getchar()) == '\n') {
+
+		if (res_flight_errors(f)) return;
+		
 		if (i != -1) {
 			link head = flight_list[i].passengers;
 			while (head != NULL) {
@@ -25,7 +29,6 @@ void reservation() {
 	} else {
 		reserv r;
 		char buffer[MAX_INPUT];
-		flight *f = &flight_list[i];
 
 		r = (reserv)malloc(sizeof(struct reservation));
 
@@ -61,7 +64,7 @@ void add_reserv(flight *f, reserv r) {
 		f->passengers = newNode;
 		newNode->next = NULL;
 		return;
-	} else {
+	} else { /* n compara c o 1o elemento !! */
 		while (head->next != NULL) {
 			if (strcmp(head->next->res->code, r->code) > 0) {
 				newNode->next = head->next;
@@ -89,6 +92,14 @@ int reservation_errors(flight *f, reserv r) {
 	    compare_date(f->dep_date, limit_date) == 1)
 		return printf(ERROR_DATE);
 	if (r->passengers <= 0) return printf(ERROR_PASSENGERS);
+	return 0;
+}
+
+int res_flight_errors(flight *f) {
+	if (search_flight(*f) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, f->code);
+	if (compare_date(f->dep_date, current_date) == -1 ||
+	    compare_date(f->dep_date, limit_date) == 1)
+		return printf(ERROR_DATE);
 	return 0;
 }
 

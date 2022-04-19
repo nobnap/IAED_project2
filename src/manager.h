@@ -45,7 +45,7 @@
 #define ERROR_RESERV_CODE "invalid reservation code\n"
 #define ERROR_NONEXISTENT_FLIGHT "%s: flight does not exist\n"
 #define ERROR_RESERV_DUPLICATE "%s: flight reservation already used\n"
-#define ERROR_PASSENGERS "invalid passager number\n"
+#define ERROR_PASSENGERS "invalid passenger number\n"
 #define ERROR_RESERV_LIMIT "too many reservations\n"
 
 /* Input and Output Strings */
@@ -162,6 +162,7 @@ void order_arrivals(arrival* arrivals_list, int size);
 void search_arrivals(char ID[]);
 void add_reserv(flight *f, reserv r);
 int reservation_errors(flight *f, reserv r);
+int res_flight_errors(flight *f);
 int valid_rescode(char *code);
 void del_allres(int i);
 void del_flight(int n);
