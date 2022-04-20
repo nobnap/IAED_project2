@@ -20,14 +20,16 @@ airport airports[MAX_AIRPORT];
 /* Number of existing airports */
 int num_airport = 0;
 
+hLink hashtable[1013];
+
 /*
  * Command Related Functions
  */
 
 /* Calls the input_reader() function */
 int main() {
+	innitHash();
 	while (input_reader());
-	/* É necessário dar free de TUDO no final do programa !! */
 	del_all();
 	return 0;
 }

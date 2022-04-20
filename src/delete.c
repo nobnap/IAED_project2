@@ -13,35 +13,24 @@ void delete () {
 				notfound = 0;
 			}
 		}
-	} /* else {
-		for (i = 0; i < num_flights; i++) {
-			while (head != NULL) {
-				if (!strcmp(head->code, code)) {
-					return;
-				}
-			}
+	} else {
+		if (search_hash(code)) {
+			notfound = 0;
+			del_hash(code);
 		}
-	} */
+	} 
  	if (notfound) printf(ERROR_NOT_FOUND); 
 }
 
-/* void del_hash() {
-
-} */
 
 void del_allres(int i) {
 	link tmp, todel = flight_list[i].passengers;
 	while (todel != NULL) {
 		tmp = todel->next;
-		free(todel->res); /* maybe tbm tenho de dar free ao code?? */
-		free(todel);
+		del_hash(todel->res->code);
 		todel = tmp;
 	}
 }
-
-/* void del_res() {
-	return;
-} */
 
 void del_flight(int n) {
 	int i;

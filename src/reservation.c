@@ -8,15 +8,15 @@ void reservation() {
 	a = getchar();
 
 	read_char(input.code, MAX_INPUT, " \t");
-	scanf(DATE_INPUT, &input.dep_date.day, &input.dep_date.month, &input.dep_date.year);
+	scanf(DATE_INPUT, &input.dep_date.day, &input.dep_date.month,
+	      &input.dep_date.year);
 
 	i = search_flight(input);
 	f = &flight_list[i];
 
 	if ((a = getchar()) == '\n') {
+		if (res_flight_errors(&input)) return;
 
-		if (res_flight_errors(f)) return;
-		
 		if (i != -1) {
 			link head = flight_list[i].passengers;
 			while (head != NULL) {
@@ -27,8 +27,9 @@ void reservation() {
 			printf(ERROR_NONEXISTENT_FLIGHT, input.code);
 
 	} else {
-		reserv r;
 		char buffer[MAX_INPUT];
+		reserv r;
+		link newR;
 
 		r = (reserv)malloc(sizeof(struct reservation));
 
@@ -38,56 +39,54 @@ void reservation() {
 		r->code = (char *)malloc(sizeof(char) * (strlen(buffer) + 1));
 		strcpy(r->code, buffer);
 
-		if (reservation_errors(f, r)) {
+		if (reservation_errors(&input, f, r)) {
 			free(r->code);
 			free(r);
 			return;
 		}
 
 		f->ocupation += r->passengers;
-		/* adicionar a reserva de forma ordenada */
-		/* lembrar de adicionar tambem à HASHTABLE */
-		add_reserv(f, r);
-		/* add_hash(r); */
+		newR = add_hash(f, r);
+		add_reserv(f, newR);
 	}
 }
 
-void add_reserv(flight *f, reserv r) {
-	link head, newNode;
+void add_reserv(flight *f, link rNode) {
+	link head;
 
-	head = f->passengers;
-
-	newNode = (link)malloc(sizeof(struct node));
-	newNode->res = r;
-
-	if (head == NULL) {
-		f->passengers = newNode;
-		newNode->next = NULL;
-		return;
-	} else { /* n compara c o 1o elemento !! */
-		while (head->next != NULL) {
-			if (strcmp(head->next->res->code, r->code) > 0) {
-				newNode->next = head->next;
-				head->next = newNode;
+	if (f->passengers == NULL) {
+		f->passengers = rNode;
+		rNode->next = NULL;
+		rNode->prev = NULL;
+	} else {
+		head = f->passengers;
+		while (head != NULL) {
+			if (strcmp(head->res->code, rNode->res->code) > 0) {
+				if (head->prev ==  NULL) {
+					f->passengers = rNode;
+				} else head->prev->next = rNode;
+				rNode->prev = head->prev;
+				head->prev = rNode;
+				rNode->next = head;
+				return;
+			}
+			if (head->next == NULL) {
+				head->next = rNode;
+				rNode->prev = head;
+				rNode->next = NULL;
 				return;
 			}
 			head = head->next;
 		}
 	}
-
-	newNode->next = NULL;
-	head->next = newNode;
 }
 
-/* void add_hash(reserv r) {
-
-} */
-
-int reservation_errors(flight *f, reserv r) {
+int reservation_errors(flight *input, flight *f, reserv r) {
 	if (!valid_rescode(r->code)) return printf(ERROR_RESERV_CODE);
-	if (search_flight(*f) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, f->code);
-	/* procurar a reserva, if already exists -> error (HASHTABLES) */
-	if (f->ocupation + r->passengers > f->capacity) return printf(ERROR_RESERV_LIMIT);
+	if (search_flight(*input) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, input->code);
+	if (search_hash(r->code)) return printf(ERROR_RESERV_DUPLICATE, r->code);
+	if (f->ocupation + r->passengers > f->capacity)
+		return printf(ERROR_RESERV_LIMIT);
 	if (compare_date(f->dep_date, current_date) == -1 ||
 	    compare_date(f->dep_date, limit_date) == 1)
 		return printf(ERROR_DATE);
@@ -106,7 +105,6 @@ int res_flight_errors(flight *f) {
 int valid_rescode(char *code) {
 	int i, len = strlen(code);
 	if (len < MIN_RESERVATION) {
-		printf("HERE %s\n%d\n", code, len);
 		return 0;
 	}
 	for (i = 0; i < len; i++) {

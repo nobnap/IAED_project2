@@ -13,10 +13,10 @@
 #define _MANAGER_H_
 
 /* Standard Libraries */
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 /* String Sizes */
 #define MAX_COUNTRY 31
@@ -24,7 +24,7 @@
 #define MAX_ID 4
 #define MAX_CODE 7
 #define MAX_INPUT 65536
-#define MIN_RESERVATION 10 
+#define MIN_RESERVATION 10
 
 /* Max Array Sizes */
 #define MAX_AIRPORT 40
@@ -57,9 +57,8 @@
 #define DATE_INPUT "%d-%d-%d"
 #define DATE_OUTPUT "%02d-%02d-%04d\n"
 
-
-/* 
- * Structures 
+/*
+ * Structures
  */
 
 typedef struct {
@@ -79,12 +78,12 @@ typedef struct {
 typedef struct reservation {
 	char *code;
 	int passengers;
-} *reserv;
+} * reserv;
 
 typedef struct node {
 	reserv res;
-	struct node *previous, *next;
-} *link;
+	struct node *prev, *next;
+} * link;
 
 typedef struct {
 	char code[MAX_CODE];
@@ -97,6 +96,12 @@ typedef struct {
 	int ocupation;
 	link passengers;
 } flight;
+
+typedef struct hNode {
+	link rNode;
+	flight *dep;
+	struct hNode *next;
+} * hLink;
 
 typedef struct {
 	flight flight;
@@ -124,7 +129,9 @@ extern airport airports[MAX_AIRPORT];
 /* Number of existing airports */
 extern int num_airport;
 
-/* 
+extern hLink hashtable[1013];
+
+/*
  * Command Related Functions
  */
 
@@ -136,12 +143,12 @@ void departures();
 void arrivals();
 void date_forward();
 void reservation();
-void delete();
+void delete ();
 void reservation();
-void delete();
+void delete ();
 
-/* 
- * Auxiliary Functions 
+/*
+ * Auxiliary Functions
  */
 
 void read_char(char word[], int size, char end[]);
@@ -155,17 +162,22 @@ int search_flight(flight input);
 int compare_date(date d1, date d2);
 int compare_time(time t1, time t2);
 int compare_timedate(date dateA, time timeA, date dateB, time timeB);
-void order_departures(flight* departures_list, int size);
+void order_departures(flight *departures_list, int size);
 void search_departures(char ID[]);
 arrival flight_into_arrival(flight f);
-void order_arrivals(arrival* arrivals_list, int size);
+void order_arrivals(arrival *arrivals_list, int size);
 void search_arrivals(char ID[]);
-void add_reserv(flight *f, reserv r);
-int reservation_errors(flight *f, reserv r);
+void add_reserv(flight *f, link rNode);
+int reservation_errors(flight *input, flight *f, reserv r);
 int res_flight_errors(flight *f);
 int valid_rescode(char *code);
 void del_allres(int i);
 void del_flight(int n);
 void del_all();
+void innitHash();
+int hash(char *code);
+link add_hash(flight* f, reserv r);
+hLink search_hash(char *code);
+void del_hash(char *code);
 
 #endif
