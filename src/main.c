@@ -11,7 +11,7 @@ date current_date = {1, 1, 2022};
 date limit_date = {1, 1, 2023};
 
 /* List of flights */
-flight flight_list[MAX_FLIGHTS];
+flight* flight_list[MAX_FLIGHTS];
 /* Number of existing flights */
 int num_flights = 0;
 

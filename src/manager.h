@@ -120,7 +120,7 @@ extern date current_date;
 extern date limit_date;
 
 /* List of flights */
-extern flight flight_list[MAX_FLIGHTS];
+extern flight* flight_list[MAX_FLIGHTS];
 /* Number of existing flights */
 extern int num_flights;
 
@@ -156,15 +156,15 @@ int flight_counter(airport ap);
 int airport_error(airport input);
 void airport_order();
 int search_airport(char ID[]);
-int flight_errors(flight input);
+int flight_errors(flight* input);
 int valid_code(char code[]);
-int search_flight(flight input);
+int search_flight(flight* f);
 int compare_date(date d1, date d2);
 int compare_time(time t1, time t2);
 int compare_timedate(date dateA, time timeA, date dateB, time timeB);
 void order_departures(flight *departures_list, int size);
 void search_departures(char ID[]);
-arrival flight_into_arrival(flight f);
+arrival flight_into_arrival(flight *f);
 void order_arrivals(arrival *arrivals_list, int size);
 void search_arrivals(char ID[]);
 void add_reserv(flight *f, link rNode);

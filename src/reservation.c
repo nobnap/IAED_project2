@@ -11,14 +11,14 @@ void reservation() {
 	scanf(DATE_INPUT, &input.dep_date.day, &input.dep_date.month,
 	      &input.dep_date.year);
 
-	i = search_flight(input);
-	f = &flight_list[i];
+	i = search_flight(&input);
+	f = flight_list[i];
 
 	if ((a = getchar()) == '\n') {
 		if (res_flight_errors(&input)) return;
 
 		if (i != -1) {
-			link head = flight_list[i].passengers;
+			link head = flight_list[i]->passengers;
 			while (head != NULL) {
 				printf("%s %d\n", head->res->code, head->res->passengers);
 				head = head->next;
@@ -83,7 +83,7 @@ void add_reserv(flight *f, link rNode) {
 
 int reservation_errors(flight *input, flight *f, reserv r) {
 	if (!valid_rescode(r->code)) return printf(ERROR_RESERV_CODE);
-	if (search_flight(*input) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, input->code);
+	if (search_flight(input) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, input->code);
 	if (search_hash(r->code)) return printf(ERROR_RESERV_DUPLICATE, r->code);
 	if (f->ocupation + r->passengers > f->capacity)
 		return printf(ERROR_RESERV_LIMIT);
@@ -95,7 +95,7 @@ int reservation_errors(flight *input, flight *f, reserv r) {
 }
 
 int res_flight_errors(flight *f) {
-	if (search_flight(*f) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, f->code);
+	if (search_flight(f) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, f->code);
 	if (compare_date(f->dep_date, current_date) == -1 ||
 	    compare_date(f->dep_date, limit_date) == 1)
 		return printf(ERROR_DATE);

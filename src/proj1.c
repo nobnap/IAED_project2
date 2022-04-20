@@ -61,26 +61,31 @@ void list_airport() {
  */
 void flights() {
 	int i;
-	flight input;
+	flight *input;
 
 	if (getchar() == '\n') {
 		for (i = 0; i < num_flights; i++) {
-			printf(FLIGHT_OUTPUT, flight_list[i].code, flight_list[i].dep_ID,
-			       flight_list[i].ar_ID, flight_list[i].dep_date.day,
-			       flight_list[i].dep_date.month, flight_list[i].dep_date.year,
-			       flight_list[i].dep_time.hour, flight_list[i].dep_time.min);
+			printf(FLIGHT_OUTPUT, flight_list[i]->code, flight_list[i]->dep_ID,
+			       flight_list[i]->ar_ID, flight_list[i]->dep_date.day,
+			       flight_list[i]->dep_date.month, flight_list[i]->dep_date.year,
+			       flight_list[i]->dep_time.hour, flight_list[i]->dep_time.min);
 		}
 
 	} else {
-		scanf(FLIGHT_INPUT, input.code, input.dep_ID, input.ar_ID,
-		      &input.dep_date.day, &input.dep_date.month, &input.dep_date.year,
-		      &input.dep_time.hour, &input.dep_time.min, &input.duration.hour,
-		      &input.duration.min, &input.capacity);
+		input = (flight*)malloc(sizeof(flight));
 
-		if (flight_errors(input)) return;
+		scanf(FLIGHT_INPUT, input->code, input->dep_ID, input->ar_ID,
+		      &input->dep_date.day, &input->dep_date.month, &input->dep_date.year,
+		      &input->dep_time.hour, &input->dep_time.min, &input->duration.hour,
+		      &input->duration.min, &input->capacity);
 
-		input.passengers = NULL;
-		input.ocupation = 0;
+		if (flight_errors(input)) {
+			free(input);
+			return;
+		}
+
+		input->passengers = NULL;
+		input->ocupation = 0;
 		flight_list[num_flights] = input;
 		num_flights++;
 	}
@@ -185,7 +190,7 @@ int flight_counter(airport ap) {
 	int i, flights = 0;
 
 	for (i = 0; i < num_flights; i++) {
-		if (!strcmp(flight_list[i].dep_ID, ap.ID)) flights++;
+		if (!strcmp(flight_list[i]->dep_ID, ap.ID)) flights++;
 	}
 	return flights;
 }
@@ -235,28 +240,28 @@ int search_airport(char ID[]) {
 }
 
 /* Checks a potential flight for errors */
-int flight_errors(flight input) {
-	if (!valid_code(input.code)) {
+int flight_errors(flight* input) {
+	if (!valid_code(input->code)) {
 		return printf(ERROR_CODE);
 	}
 	if (search_flight(input) != -1) {
 		return printf(ERROR_FLIGHT_DUPLICATE);
 	}
-	if (search_airport(input.dep_ID) == -1 || search_airport(input.ar_ID) == -1) {
+	if (search_airport(input->dep_ID) == -1 || search_airport(input->ar_ID) == -1) {
 		return 1;
 	}
 	if (num_flights >= MAX_FLIGHTS) {
 		return printf(ERROR_FLIGHT_LIMIT);
 	}
-	if (compare_date(input.dep_date, current_date) == -1 ||
-	    compare_date(input.dep_date, limit_date) == 1) {
+	if (compare_date(input->dep_date, current_date) == -1 ||
+	    compare_date(input->dep_date, limit_date) == 1) {
 		return printf(ERROR_DATE);
 	}
-	if (input.duration.hour > 12 ||
-	    (input.duration.hour == 12 && input.duration.min > 0)) {
+	if (input->duration.hour > 12 ||
+	    (input->duration.hour == 12 && input->duration.min > 0)) {
 		return printf(ERROR_DURATION);
 	}
-	if (input.capacity < 10 || input.capacity > 100) {
+	if (input->capacity < 10 || input->capacity > 100) {
 		return printf(ERROR_CAPACITY);
 	}
 	return 0;
@@ -277,12 +282,12 @@ int valid_code(char code[]) {
 }
 
 /* Searches for a flight in a list through linear search */
-int search_flight(flight f) {
+int search_flight(flight* f) {
 	int i;
 
 	for (i = 0; i < num_flights; i++) {
-		if (!strcmp(f.code, flight_list[i].code) &&
-		    !compare_date(f.dep_date, flight_list[i].dep_date)) {
+		if (!strcmp(f->code, flight_list[i]->code) &&
+		    !compare_date(f->dep_date, flight_list[i]->dep_date)) {
 			return i;
 			/* Returns 1 if a flight with the same code and departure date exists */
 		}
@@ -360,8 +365,8 @@ void search_departures(char ID[]) {
 
 	departures_list = malloc(sizeof(flight)*num_flights);
 	for (i = 0; i < num_flights; i++) {
-		if (!strcmp(ID, flight_list[i].dep_ID)) {
-			departures_list[n] = flight_list[i];
+		if (!strcmp(ID, flight_list[i]->dep_ID)) {
+			departures_list[n] = *flight_list[i];
 			n++;
 		}
 	}
@@ -377,13 +382,13 @@ void search_departures(char ID[]) {
 }
 
 /* Turns a flight struct into a arrival struct, calculating when it arrives */
-arrival flight_into_arrival(flight f) {
+arrival flight_into_arrival(flight *f) {
 	arrival ar;
 
-	ar.flight = f;
-	ar.date = f.dep_date;
-	ar.time.hour = f.dep_time.hour + f.duration.hour;
-	ar.time.min = f.dep_time.min + f.duration.min;
+	ar.flight = *f;
+	ar.date = f->dep_date;
+	ar.time.hour = f->dep_time.hour + f->duration.hour;
+	ar.time.min = f->dep_time.min + f->duration.min;
 
 	if (ar.time.min >= 60) {
 		ar.time.min -= 60;
@@ -438,7 +443,7 @@ void search_arrivals(char ID[]) {
 
 	arrivals_list = malloc(sizeof(arrival)*num_flights);
 	for (i = 0; i < num_flights; i++) {
-		if (!strcmp(ID, flight_list[i].ar_ID)) {
+		if (!strcmp(ID, flight_list[i]->ar_ID)) {
 			arrivals_list[n] = flight_into_arrival(flight_list[i]);
 			n++;
 		}
