@@ -1,20 +1,33 @@
-/* HASHTABLES */
+/*
+ * File: hash.c
+ *
+ * Author: Maria João Rosa
+ * Email: maria.j.rosa@tecnico.ulisboa.pt
+ *
+ * Description: File containing all the code used for implementing the
+ * hashtable.
+ *
+ */
 
 #include "manager.h"
 
-void innitHash() {
+/* Initializes all the hashtable pointers to NULL */
+void initHash() {
 	int i;
 	for (i = 0; i < 0; i++) hashtable[i] = NULL;
 }
 
+/* Generates the index for a specific code */
 int hash(char *code) {
 	int i, h = 0, a = 127, M = 1013;
-	for (i=0;code[i] != '\0';i++) {
+	for (i = 0; code[i] != '\0'; i++) {
 		h = (a * h + code[i]) % M;
 	}
 	return h;
 }
 
+/* Adds a reservation to the hashtable, returning the node used to add it to the
+ * flight passengers list */
 link add_hash(flight *f, reserv r) {
 	int h;
 	link newNode;
@@ -40,6 +53,7 @@ link add_hash(flight *f, reserv r) {
 	return newNode;
 }
 
+/* Searches for a code in the hashtable */
 hLink search_hash(char *code) {
 	int h = hash(code);
 	hLink head = hashtable[h];
@@ -52,14 +66,17 @@ hLink search_hash(char *code) {
 	return NULL;
 }
 
+/* Deletes a reservation from the hashtable through its code */
 void del_hash(char *code) {
 	int h = hash(code);
 	hLink head = NULL, todel = hashtable[h];
 	link node;
 	while (todel) {
 		if (!strcmp(todel->rNode->res->code, code)) {
-			if (head) head->next = todel->next;
-			else hashtable[h] = NULL;
+			if (head)
+				head->next = todel->next;
+			else
+				hashtable[h] = NULL;
 			break;
 		}
 		head = todel;
@@ -72,7 +89,7 @@ void del_hash(char *code) {
 		node->prev->next = node->next;
 	else
 		todel->dep->passengers = node->next;
-	
+
 	todel->dep->ocupation -= todel->rNode->res->passengers;
 
 	free(todel->rNode->res->code);

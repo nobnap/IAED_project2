@@ -1,10 +1,21 @@
+/*
+ * File: delete.c
+ *
+ * Author: Maria João Rosa
+ * Email: maria.j.rosa@tecnico.ulisboa.pt
+ *
+ * Description: File containing all the code relating to the delete() function.
+ *
+ */
+
 #include "manager.h"
 
+/* Deletes either a flight or a reservation */
 void delete () {
 	int i, len, notfound = 1;
 	char code[MAX_INPUT];
 	scanf("%s", code);
-	len = strlen(code)+1;
+	len = strlen(code) + 1;
 	if (len < MIN_RESERVATION) {
 		for (i = 0; i < num_flights; i++) {
 			if (!strcmp(flight_list[i]->code, code)) {
@@ -18,11 +29,11 @@ void delete () {
 			notfound = 0;
 			del_hash(code);
 		}
-	} 
- 	if (notfound) printf(ERROR_NOT_FOUND); 
+	}
+	if (notfound) printf(ERROR_NOT_FOUND);
 }
 
-
+/* Deletes all reservations from the flight with index i on the flight_list */
 void del_allres(int i) {
 	link tmp, todel = flight_list[i]->passengers;
 	while (todel != NULL) {
@@ -32,6 +43,7 @@ void del_allres(int i) {
 	}
 }
 
+/* Deletes a flight and its respective reservations */
 void del_flight(int n) {
 	int i;
 
@@ -42,6 +54,7 @@ void del_flight(int n) {
 	flight_list[num_flights] = NULL;
 }
 
+/* Deletes all flights and respective reservations */
 void del_all() {
 	while (flight_list[0]) del_flight(0);
 }

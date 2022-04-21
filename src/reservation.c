@@ -1,5 +1,18 @@
+/*
+ * File: reservation.c
+ *
+ * Author: Maria João Rosa
+ * Email: maria.j.rosa@tecnico.ulisboa.pt
+ *
+ * Description: File containing all the code relating to the reservation()
+ * function.
+ *
+ */
+
 #include "manager.h"
 
+/* Lists reservations for the flight specified by the user or adds a new
+ * reservation */
 void reservation() {
 	int i;
 	flight input, *f;
@@ -51,6 +64,7 @@ void reservation() {
 	}
 }
 
+/* Adds a reservation to a linked list of flight passengers */
 void add_reserv(flight *f, link rNode) {
 	link head;
 
@@ -62,9 +76,10 @@ void add_reserv(flight *f, link rNode) {
 		head = f->passengers;
 		while (head != NULL) {
 			if (strcmp(head->res->code, rNode->res->code) > 0) {
-				if (head->prev ==  NULL) {
+				if (head->prev == NULL) {
 					f->passengers = rNode;
-				} else head->prev->next = rNode;
+				} else
+					head->prev->next = rNode;
 				rNode->prev = head->prev;
 				head->prev = rNode;
 				rNode->next = head;
@@ -81,9 +96,11 @@ void add_reserv(flight *f, link rNode) {
 	}
 }
 
+/* Checks for errors in the input flight and reservation */
 int reservation_errors(flight *input, flight *f, reserv r) {
 	if (!valid_rescode(r->code)) return printf(ERROR_RESERV_CODE);
-	if (search_flight(input) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, input->code);
+	if (search_flight(input) == -1)
+		return printf(ERROR_NONEXISTENT_FLIGHT, input->code);
 	if (search_hash(r->code)) return printf(ERROR_RESERV_DUPLICATE, r->code);
 	if (f->ocupation + r->passengers > f->capacity)
 		return printf(ERROR_RESERV_LIMIT);
@@ -94,6 +111,7 @@ int reservation_errors(flight *input, flight *f, reserv r) {
 	return 0;
 }
 
+/* Checks for errors in the input flight */
 int res_flight_errors(flight *f) {
 	if (search_flight(f) == -1) return printf(ERROR_NONEXISTENT_FLIGHT, f->code);
 	if (compare_date(f->dep_date, current_date) == -1 ||
@@ -102,6 +120,7 @@ int res_flight_errors(flight *f) {
 	return 0;
 }
 
+/* Checks if the input reservation code is valid */
 int valid_rescode(char *code) {
 	int i, len = strlen(code);
 	if (len < MIN_RESERVATION) {

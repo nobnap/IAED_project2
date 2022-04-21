@@ -1,12 +1,13 @@
 /*
- * File: main.c
+ * File: proj1.c
  *
  * Author: Maria João Rosa
  * Email: maria.j.rosa@tecnico.ulisboa.pt
  *
  * Description: File containing all the code used in the first Introduction to
- * Algorithms and Data Structures project.
- *
+ * Algorithms and Data Structures project, with changes in order to better fit
+ * the instructions for the second project.
+ * 
  */
 
 #include "manager.h"
@@ -261,7 +262,7 @@ int flight_errors(flight* input) {
 	    (input->duration.hour == 12 && input->duration.min > 0)) {
 		return printf(ERROR_DURATION);
 	}
-	if (input->capacity < 10 || input->capacity > 100) {
+	if (input->capacity < 10) {
 		return printf(ERROR_CAPACITY);
 	}
 	return 0;
@@ -381,7 +382,7 @@ void search_departures(char ID[]) {
 	free(departures_list);
 }
 
-/* Turns a flight struct into a arrival struct, calculating when it arrives */
+/* Turns a flight into a arrival struct, calculating when it arrives */
 arrival flight_into_arrival(flight *f) {
 	arrival ar;
 

@@ -129,6 +129,7 @@ extern airport airports[MAX_AIRPORT];
 /* Number of existing airports */
 extern int num_airport;
 
+/* Hashtable used to save the reservations */
 extern hLink hashtable[1013];
 
 /*
@@ -142,8 +143,6 @@ void flights();
 void departures();
 void arrivals();
 void date_forward();
-void reservation();
-void delete ();
 void reservation();
 void delete ();
 
@@ -167,14 +166,17 @@ void search_departures(char ID[]);
 arrival flight_into_arrival(flight *f);
 void order_arrivals(arrival *arrivals_list, int size);
 void search_arrivals(char ID[]);
+
 void add_reserv(flight *f, link rNode);
 int reservation_errors(flight *input, flight *f, reserv r);
 int res_flight_errors(flight *f);
 int valid_rescode(char *code);
+
 void del_allres(int i);
 void del_flight(int n);
 void del_all();
-void innitHash();
+
+void initHash();
 int hash(char *code);
 link add_hash(flight* f, reserv r);
 hLink search_hash(char *code);

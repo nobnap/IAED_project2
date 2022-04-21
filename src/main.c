@@ -1,3 +1,14 @@
+/*
+ * File: main.c
+ *
+ * Author: Maria João Rosa
+ * Email: maria.j.rosa@tecnico.ulisboa.pt
+ *
+ * Description: File containing all the code used in the first Introduction to
+ * Algorithms and Data Structures project.
+ *
+ */
+
 #include "manager.h"
 
 /*
@@ -20,16 +31,19 @@ airport airports[MAX_AIRPORT];
 /* Number of existing airports */
 int num_airport = 0;
 
+/* Hashtable used to save the reservations */
 hLink hashtable[1013];
 
 /*
  * Command Related Functions
  */
 
-/* Calls the input_reader() function */
+/* Initializes the hash, calls the input_reader() function and deletes all
+ * flights and respective reservations when the program is ended */
 int main() {
-	innitHash();
-	while (input_reader());
+	initHash();
+	while (input_reader())
+		;
 	del_all();
 	return 0;
 }
@@ -59,12 +73,12 @@ int input_reader() {
 		case 't':
 			date_forward();
 			break;
- 		case 'r':
+		case 'r':
 			reservation();
 			break;
 		case 'e':
-			delete();
-			break; 
+			delete ();
+			break;
 	}
 	return 1;
 }
