@@ -42,8 +42,7 @@ hLink hashtable[1013];
  * flights and respective reservations when the program is ended */
 int main() {
 	initHash();
-	while (input_reader())
-		;
+	while (input_reader());
 	del_all();
 	return 0;
 }
@@ -77,7 +76,7 @@ int input_reader() {
 			reservation();
 			break;
 		case 'e':
-			delete ();
+			delete();
 			break;
 	}
 	return 1;

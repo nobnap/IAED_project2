@@ -38,7 +38,7 @@ void del_allres(int i) {
 	link tmp, todel = flight_list[i]->passengers;
 	while (todel != NULL) {
 		tmp = todel->next;
-		del_hash(todel->res->code);
+		if (search_hash(todel->res->code)) del_hash(todel->res->code);
 		todel = tmp;
 	}
 }

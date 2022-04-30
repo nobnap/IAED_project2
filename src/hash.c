@@ -42,6 +42,7 @@ link add_hash(flight *f, reserv r) {
 
 	h = hash(r->code);
 	head = hashtable[h];
+	/* Adds node to the beginning of the linked list */
 	if (head == NULL) {
 		hashtable[h] = newHash;
 		newHash->next = NULL;
@@ -71,9 +72,10 @@ void del_hash(char *code) {
 	int h = hash(code);
 	hLink head = NULL, todel = hashtable[h];
 	link node;
+	
 	while (todel) {
 		if (!strcmp(todel->rNode->res->code, code)) {
-			if (head)
+			if (head && todel->next)
 				head->next = todel->next;
 			else
 				hashtable[h] = NULL;
@@ -83,6 +85,7 @@ void del_hash(char *code) {
 		todel = todel->next;
 	}
 
+	/* Deletes reservation node from the passenger list in the flight struct */
 	node = todel->rNode;
 	if (node->next) node->next->prev = node->prev;
 	if (node->prev)
